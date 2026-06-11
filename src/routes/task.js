@@ -14,4 +14,18 @@ router.post('/', (req, res) => {
     res.status(201).json(task)
 })
 
+router.put('/:id', (req, res) => {
+  const task = tasks.find(t => t.id === Number(req.params.id))
+  if (!task) return res.status(404).json({ error: 'Tarefa não encontrada' })
+  Object.assign(task, req.body)
+  res.json(task)
+})
+
+router.delete('/:id', (req, res) => {
+    const index = tasks.findIndex(t => t.id === Number(req.params.id))
+    if (index === -1) return res.status(404).json({ error: 'Tarefa não encontrada'})
+    tasks.splice(index, 1)
+    res.status(204).end()
+})
+
 export default router
