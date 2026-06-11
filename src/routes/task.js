@@ -9,9 +9,9 @@ router.get('/', (req, res) => {
 
 router.post('/', (req, res) => {
     const { title } = req.body
-    const task = { id: nextId(), titile, done: false }
-    task.push(task)
-    res.status.json(task)
+    const task = { id: nextId(), title, done: false }
+    tasks.push(task)
+    res.status(201).json(task)
 })
 
 export default router
