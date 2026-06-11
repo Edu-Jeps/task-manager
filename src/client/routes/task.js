@@ -1,5 +1,10 @@
 import { Router } from 'express'
 import { nextId, tasks } from '../../data/tasks.js'
+import { z } from 'zod'
+
+const createtaskSchema = z.object({
+    title: z.string().min(2, 'O título é obrigatório').max(30, 'O título deve ter no máximo 30 caracteres')
+}) 
 
 const router = Router()
 
@@ -11,9 +16,12 @@ router.get('/', async (req, res) => {
 })
 
 router.post('/', async (req, res) => {
-    const { title } = req.body
+    const result = createtaskSchema.safeParse(req.body)
+    if (!result.success){
+        return res.status(400).json({ errors: result.error.flatten()})
+    }
     const task = await prisma.task.create({
-        data: { title }
+        data: result.data
     })
     res.status(201).json(task)
 })
