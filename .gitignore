@@ -39,3 +39,7 @@ Thumbs.db
 
 # Arquivos de configuração local
 *.local
+/src/generated/prisma/
+
+prisma/dev.db
+*.db

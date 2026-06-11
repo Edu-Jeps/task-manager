@@ -20,6 +20,8 @@
   },
   "homepage": "https://github.com/Edu-Jeps/task-manager#readme",
   "dependencies": {
-    "express": "^5.2.1"
+    "@prisma/client": "^6.19.3",
+    "express": "^5.2.1",
+    "prisma": "^6.19.3"
   }
 }
