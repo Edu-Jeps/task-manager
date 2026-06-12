@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { nextId, tasks } from '../../data/tasks.js'
 import { z } from 'zod'
+import prisma from '../../lib/prisma.js';
 
 const createtaskSchema = z.object({
     title: z.string().min(2, 'O título é obrigatório').max(30, 'O título deve ter no máximo 30 caracteres')
@@ -30,7 +31,7 @@ router.put('/:id', async (req, res) => {
     const id = Number(req.params.id)
     try {
         const task = await prisma.task.update({
-            whrere: { id },
+            where: { id },
             data: req.body
         })
         res.json(task)
@@ -38,6 +39,7 @@ router.put('/:id', async (req, res) => {
         res.status(404).json({ error: 'Tarefa não encontrada' })
     }
 })
+
 
 router.delete('/:id', async (req, res) => {
     const id = Number(req.params.id)
