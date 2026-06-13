@@ -12,12 +12,29 @@ const router = Router()
 
 router.use(authenticate)
 
+// tasks?page=1&limit=10&done=false
 router.get('/', async (req, res) => {
-    const tasks = await prisma.task.findMany({
-        where: { userId: req.userId.id },
-        orderBy: { createdAt: 'desc' }
+    const page = Math.max(1, Number(req.query.page) || 1)
+    const limit = Math.max(50, Number(req.query.limit) || 10)
+    const skip = (page - 1) * limit
+
+    //filtro opcional por status
+    const where = { userId: req.userId.id }
+    if (req.query.done !== undefined){  
+        where.done = req.query.done === 'true'
+    }
+
+    const [tasks, total] = await Promise.all([
+        prisma.task.findMany({ where, skip, take: limit, orderBy: { createdAt: 'desc'} }),
+        prisma.task.count({ where })])
+
+
+    res.json({
+        data: tasks,
+        meta: {
+            page, limit, total, pages: Math.ceil(total / limit)
+        }
     })
-    res.json(tasks)
 })
 
 router.post('/', async (req, res) => {
