@@ -80,7 +80,7 @@ router.put('/:id', async (req, res, next) => {
 
 router.delete('/:id', async (req, res) => {
   const task = await prisma.task.findFirst({
-    where: { id: Number(req.params.id), userId: req.user.id }
+    where: { id: Number(req.params.id), userId: req.userId.id }
   })
   if (!task) return res.status(404).json({ error: 'Task não encontrada' })
 
