@@ -37,23 +37,31 @@ router.get('/', async (req, res) => {
     })
 })
 
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next) => {
     const result = createtaskSchema.safeParse(req.body)
     if (!result.success){
         return res.status(400).json({ errors: result.error.flatten()})
     }
-    const task = await prisma.task.create({
-        data: {
-            ...result.data,
-            userId: req.userId.id
-        }
-    })
-    res.status(201).json(task)
+
+    try{
+        const task = await prisma.task.create({
+            data: {
+                ...result.data,
+                userId: req.userId.id
+            }
+        })
+        res.status(201).json(task)
+    } catch (error) {
+        next(error)
+    }
 })
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', async (req, res, next) => {
+
+    const id = Number(req.params.id)
+    
     const task = await prisma.task.findFirst({
-        where: { id: Number(req.params.id), userId: req.userId.id }
+        where: { id: id, userId: req.userId.id }
     })
 
     if (!task) return res.status(404).json({ error: 'Tarefa não encontrada'})
@@ -65,7 +73,7 @@ router.put('/:id', async (req, res) => {
         })
         res.json(atualiza)
     } catch (error) {
-        res.status(404).json({ error: 'Tarefa não encontrada' })
+        next(error)
     }
 })
 
